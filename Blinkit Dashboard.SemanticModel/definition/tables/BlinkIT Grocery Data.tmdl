@@ -1,0 +1,144 @@
+table 'BlinkIT Grocery Data'
+	lineageTag: 19c64ed9-42b8-4322-afdd-fa3c232b30af
+
+	measure 'Total Sales' = SUM('BlinkIT Grocery Data'[Sales])
+		formatString: \$#,0.00;(\$#,0.00);\$#,0.00
+		lineageTag: bb8f8d0f-e930-4bef-be92-54258b2e0c2c
+
+	measure 'Avg Sales' = AVERAGE('BlinkIT Grocery Data'[Sales])
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: dc7e4985-b017-4d36-912c-51424e22afce
+
+	measure 'No of items' = COUNTROWS('BlinkIT Grocery Data')
+		formatString: 0
+		lineageTag: ac37343d-cacf-469e-8c84-6678ccd8f80e
+
+	measure 'Avg Rating' = AVERAGE('BlinkIT Grocery Data'[Rating])
+		formatString: 0
+		lineageTag: f2ebae3d-ae1d-4c22-977e-318415003793
+
+		annotation PBI_FormatHint = {"isDecimal":true}
+
+	column 'Item Fat Content'
+		dataType: string
+		lineageTag: 9b93564b-7e7a-4de6-a1c2-9fb721046531
+		summarizeBy: none
+		sourceColumn: Item Fat Content
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Identifier'
+		dataType: string
+		lineageTag: cecef447-45cf-47d0-b0bf-85d64680b157
+		summarizeBy: none
+		sourceColumn: Item Identifier
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Type'
+		dataType: string
+		lineageTag: de314350-6de0-469b-86eb-1aac7f96f8f5
+		summarizeBy: none
+		sourceColumn: Item Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Outlet Establishment Year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 05afb3ec-976b-4c07-96e9-6fdcde087ef8
+		summarizeBy: sum
+		sourceColumn: Outlet Establishment Year
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Outlet Identifier'
+		dataType: string
+		lineageTag: c5af6f3e-93db-4e40-a69c-a5d8a37c7468
+		summarizeBy: none
+		sourceColumn: Outlet Identifier
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Outlet Location Type'
+		dataType: string
+		lineageTag: 9c5ba45e-9948-41cc-8137-bfa986ffabb8
+		summarizeBy: none
+		sourceColumn: Outlet Location Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Outlet Size'
+		dataType: string
+		lineageTag: bfbfc939-dd6b-40b7-80aa-a768d7e26425
+		summarizeBy: none
+		sourceColumn: Outlet Size
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Outlet Type'
+		dataType: string
+		lineageTag: 742c4055-39c4-49d4-b1db-bdcc8fa4c597
+		summarizeBy: none
+		sourceColumn: Outlet Type
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item Visibility'
+		dataType: double
+		lineageTag: b0edc36c-8118-4c29-942a-601072029f87
+		summarizeBy: sum
+		sourceColumn: Item Visibility
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Item Weight'
+		dataType: double
+		lineageTag: 86626ca3-e28b-4650-ac44-a1968f37a00d
+		summarizeBy: sum
+		sourceColumn: Item Weight
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Sales
+		dataType: double
+		lineageTag: cc8bff20-e0d4-4d38-b00e-290a80f6fc22
+		summarizeBy: sum
+		sourceColumn: Sales
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column Rating
+		dataType: int64
+		formatString: 0
+		lineageTag: 0923e404-318a-426f-8d67-683d24d01e40
+		summarizeBy: sum
+		sourceColumn: Rating
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'BlinkIT Grocery Data' = m
+		mode: import
+		source =
+				let
+				    Source = Excel.Workbook(File.Contents("C:\Users\suman\Downloads\BlinkIT Grocery Data.xlsx"), null, true),
+				    #"BlinkIT Grocery Data_Sheet" = Source{[Item="BlinkIT Grocery Data",Kind="Sheet"]}[Data],
+				    #"Promoted Headers" = Table.PromoteHeaders(#"BlinkIT Grocery Data_Sheet", [PromoteAllScalars=true]),
+				    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers",{{"Item Fat Content", type text}, {"Item Identifier", type text}, {"Item Type", type text}, {"Outlet Establishment Year", Int64.Type}, {"Outlet Identifier", type text}, {"Outlet Location Type", type text}, {"Outlet Size", type text}, {"Outlet Type", type text}, {"Item Visibility", type number}, {"Item Weight", type number}, {"Sales", type number}, {"Rating", Int64.Type}}),
+				    #"Replaced Value" = Table.ReplaceValue(#"Changed Type","LF","Low Fat",Replacer.ReplaceText,{"Item Fat Content"}),
+				    #"Replaced Value1" = Table.ReplaceValue(#"Replaced Value","reg","Regular",Replacer.ReplaceText,{"Item Fat Content"}),
+				    #"Replaced Value2" = Table.ReplaceValue(#"Replaced Value1","low fat","Low Fat",Replacer.ReplaceText,{"Item Fat Content"}),
+				    #"Filtered Rows" = Table.SelectRows(#"Replaced Value2", each true)
+				in
+				    #"Filtered Rows"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

@@ -1,0 +1,22 @@
+model Model
+	culture: en-IN
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-IN
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation PBI_QueryOrder = ["BlinkIT Grocery Data"]
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBIDesktopVersion = 2.132.1053.0 (24.08)
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table 'BlinkIT Grocery Data'
+ref table DateTableTemplate_4dce2bf0-d8c9-4cca-8618-f3be9c90a467
+ref table Metrics
+
+ref cultureInfo en-IN
+
